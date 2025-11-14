@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LedgerLift Studio - FAQ Chat</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #root {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .chatbot-container {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+            max-height: 800px;
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .header-text h1 {
+            font-size: 1.4em;
+            margin-bottom: 3px;
+        }
+
+        .header-text p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .chatbot-body {
+            flex: 1;
+            background: #f7fafc;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .chatbot-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chatbot-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .chatbot-body::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            padding: 15px 20px;
+            border-radius: 18px;
+            max-width: 80%;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .message.bot .message-bubble {
+            background: white;
+            color: #2d3748;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .quick-buttons {
+            display: grid;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .quick-button {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 18px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .quick-button:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        .quick-button-icon {
+            font-size: 28px;
+            min-width: 35px;
+        }
+
+        .quick-button-text strong {
+            display: block;
+            color: #2d3748;
+            margin-bottom: 3px;
+            font-size: 1em;
+        }
+
+        .quick-button-text small {
+            color: #718096;
+            font-size: 0.85em;
+        }
+
+        .message-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .message-option-btn {
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .message-option-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .cta-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .cta-btn.secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .chatbot-input {
+            background: white;
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 12px;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 30px;
+            font-size: 0.95em;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chatbot-input input:focus {
+            border-color: #667eea;
+        }
+
+        .chatbot-input button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .chatbot-input button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .chatbot-input button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 15px 20px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+
+            .chatbot-container {
+                border-radius: 0;
+                height: 100vh;
+                max-height: none;
+            }
+
+            .chatbot-header {
+                padding: 20px;
+            }
+
+            .header-text h1 {
+                font-size: 1.2em;
+            }
+
+            .back-button {
+                padding: 8px 16px;
+                font-size: 0.85em;
+            }
+
+            .message-bubble {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Q&A Database
+        const QA_DATABASE = {
+            pricing: {
+                title: "💰 Product & Pricing",
+                description: "What's included, costs, bundles",
+                questions: [
+                    {
+                        q: "What's the difference between $17 and $29?",
+                        a: `Great question! Here's the breakdown:\n\n📘 **$17 - Phase 1 Core Workbook (standalone)**\n• 12-page PDF workbook\n• Foundation exercises\n• Perfect if you just want the core content\n\n📦 **$29 - Level 1 Complete Bundle**\n• Phase 1 Core Workbook (12 pages)\n• Start Here Guide\n• Quick Start Guide\n• Daily Tracker\n• Bonus resources\n\n💎 **Best value:** The $29 bundle gives you 40% more content for just $12 more!`,
+                        ctas: [
+                            { text: "Take the Quiz First", url: "https://journey-map-quiz.vercel.app", primary: true },
+                            { text: "View Products", url: "https://stan.store/ledgerliftstudio", primary: false }
+                        ]
+                    },
+                    {
+                        q: "What's included in Level 1?",
+                        a: `Level 1: Build Yourself First (Foundations) includes:\n\n✅ **Phase 1 Core Workbook** (12 pages)\n• Life areas assessment\n• Values discovery exercises\n• Goal-setting framework\n• Habit tracking system\n\n✅ **Start Here Guide**\n• How to use the system\n• Best practices\n• Common mistakes to avoid\n\n✅ **Quick Start Guide**\n• 15-minute overview\n• Fast implementation tips\n\n✅ **Daily Tracker**\n• Track your progress\n• Build consistency\n\n✅ **Bonus Resources**\n• Additional templates\n• Reference materials`,
+                        ctas: [
+                            { text: "Get Level 1 Bundle", url: "https://stan.store/ledgerliftstudio", primary: true }
+                        ]
+                    },
+                    {
+                        q: "Do you offer refunds?",
+                        a: `✅ **Yes! We offer a 30-day money-back guarantee** on all products.\n\nIf you purchase a template and it doesn't work for your business, just email us within 30 days and we'll issue a full refund - no questions asked.\n\n💼 We're bootstrap founders helping bootstrap founders. We get it. Your money matters.`,
+                        ctas: [
+                            { text: "View Our Products", url: "https://stan.store/ledgerliftstudio", primary: true }
+                        ]
+                    },
+                    {
+                        q: "Are there bundle discounts?",
+                        a: `Yes! Here's how our bundles work:\n\n💰 **Current Offer:**\nBuy the **Level 1 Complete Bundle ($29)** and save compared to buying items separately.\n\n🎁 **Coming Soon:**\nWe're working on multi-level bundles that will offer even bigger savings when you purchase multiple levels together.\n\n📧 Want to be notified when bundle deals launch? Enter your email after taking the quiz!`,
+                        ctas: [
+                            { text: "Take the Quiz", url: "https://journey-map-quiz.vercel.app", primary: true }
+                        ]
+                    },
+                    {
+                        q: "What are Levels 2-5?",
+                        a: `Our **5-Level Journey System** guides you from chaos to mastery:\n\n**Level 1: Build Yourself First** ($29)\nFoundations: Personal clarity & systems\n\n**Level 2: Monthly Close Command Center** ($29)\nFinance systems: Month-end close processes\n\n**Level 3: Business Systems** (Coming Soon)\nOperations: Automate & streamline\n\n**Level 4: Scale** (Coming Soon)\nGrowth: Team building & expansion\n\n**Level 5: Master** (Coming Soon)\nOptimization: Peak performance systems\n\nTake the quiz to find out which level you're at right now!`,
+                        ctas: [
+                            { text: "Take the Journey Quiz", url: "https://journey-map-quiz.vercel.app", primary: true }
+                        ]
+                    },
+                    {
+                        q: "Is there a free trial?",
+                        a: `We don't offer free trials, but we do offer something better:\n\n✅ **Free Journey Level Quiz** - Find out exactly where you are (no purchase required)\n\n✅ **30-Day Money-Back Guarantee** - Try any product risk-free for a full month\n\n✅ **Free Resources** - Get helpful templates and guides when you take the quiz\n\nThis way, you can make an informed decision before buying, and if it's not right for you, get a full refund!`,
+                        ctas: [
+                            { text: "Take Free Quiz", url: "https://journey-map-quiz.vercel.app", primary: true }
+                        ]
+                    }
+                ]
+            },
+            quiz: {
+                title: "🎯 About the Quiz",
+                description: "How it works, what happens next",
+                questions: [
+                    {
+                        q: "How long does the quiz take?",
+                        a: `⏱️ The Journey Level Quiz takes about **2-3 minutes** to complete.\n\nYou'll answer 8-10 questions about your current business finances, and we'll instantly show you which of our 5 levels you're at.\n\n✅ **No email required** to see your results!\n💌 But we recommend entering your email so we can send you personalized resources for your specific level.`,
+                        ctas: [
+                            { text: "Take the Quiz Now", url: "https://journey-map-quiz.vercel.app", primary: true },
+                            { text: "Learn About Levels", url: "https://stan.store/ledgerliftstudio", primary: false }
+                        ]
+                    },
+                    {
+                        q: "What happens after I take the quiz?",
+                        a: `Here's exactly what happens:\n\n1️⃣ **See your results instantly** - No waiting, immediate feedback\n\n2️⃣ **Get a custom email** - Resources tailored to your specific level\n\n3️⃣ **Access free templates** - Helpful tools designed for where you are now\n\n4️⃣ **Optional purchase** - Buy the complete system for your level (only if you want to)\n\n📧 No spam. No hard sell. Just helpful resources tailored to YOUR business stage.`,
+                        ctas: [
+                            { text: "Take the Quiz", url: "https://journey-map-quiz.vercel.app", primary: true }
+                        ]
+                    },
+                    {
+                        q: "Do I have to buy something to take the quiz?",
+                        a: `**Absolutely not!** ✅\n\nThe Journey Level Quiz is **100% free**, with no purchase required.\n\n🎯 The quiz helps you understand where you are in your business journey\n📊 You'll get free resources based on your level\n💡 You'll learn what to focus on next\n\nIf you find value and want the complete system for your level, you can purchase it. But there's zero pressure or obligation.`,
+                        ctas: [
+                            { text: "Take Free Quiz", url: "https://journey-map-quiz.vercel.app", primary: true }
+                        ]
+                    },
+                    {
+                        q: "What is the Journey Level system?",
+                        a: `The **Journey Level System** is our framework that maps your business financial maturity across 5 progressive stages:\n\n🏗️ **Level 1: Build** - Foundation & personal clarity\n💰 **Level 2: Close** - Financial reporting systems\n⚙️ **Level 3: Systems** - Business automation\n📈 **Level 4: Scale** - Growth & team building\n🎯 **Level 5: Master** - Peak optimization\n\nInstead of generic advice, you get tools and strategies specifically designed for YOUR current stage.\n\nNo more feeling overwhelmed by advice for companies 10 steps ahead of you!`,
+                        ctas: [
+                            { text: "Find Your Level", url: "https://journey-map-quiz.vercel.app", primary: true }
+                        ]
+                    },
+                    {
+                        q: "Can I retake the quiz?",
+                        a: `Yes! You can retake the quiz anytime. 🔄\n\nIn fact, we **encourage** retaking it every 3-6 months as your business evolves.\n\n📊 Your level will likely change as you:\n• Implement new systems\n• Grow your business\n• Build better processes\n\nWatching yourself progress from Level 1 → Level 2 → Level 3 is incredibly motivating!`,
+                        ctas: [
+                            { text: "Take Quiz Now", url: "https://journey-map-quiz.vercel.app", primary: true }
+                        ]
+                    }
+                ]
+            },
+            delivery: {
+                title: "📦 Delivery & Access",
+                description: "How to get your templates",
+                questions: [
+                    {
+                        q: "How do I access my purchase?",
+                        a: `Getting your products is super simple:\n\n1️⃣ **Instant delivery** - Files are delivered immediately after purchase\n\n2️⃣ **Download link** - Check your email for the download link\n\n3️⃣ **Stan Store account** - Also accessible in your Stan Store account anytime\n\n4️⃣ **Save your files** - Download and save to your computer/cloud\n\n💡 **Pro tip:** Save files to Google Drive or Dropbox so you never lose them!`,
+                        ctas: []
+                    },
+                    {
+                        q: "Is this instant delivery?",
+                        a: `✅ **Yes! Delivery is 100% instant.**\n\nAs soon as your payment processes:\n• You'll see a download page\n• You'll receive an email with download links\n• Files are accessible in your Stan Store account\n\nNo waiting. No delays. Instant access to start working immediately.\n\n⚡ Average time from purchase to download: **Less than 60 seconds!**`,
+                        ctas: []
+                    },
+                    {
+                        q: "What format are the templates?",
+                        a: `Our templates come in multiple formats:\n\n📄 **PDF Files** - Most workbooks and guides\n• Easy to view on any device\n• Printable\n• Can fill in digitally or by hand\n\n📊 **Excel/Google Sheets** - Financial templates\n• Fully editable\n• Formulas included\n• Works with Excel, Google Sheets, Numbers\n\n📝 **Word/Google Docs** - Some worksheets\n• Fully customizable\n• Easy to edit and personalize\n\n💡 Everything is designed to work with free tools - no expensive software required!`,
+                        ctas: []
+                    },
+                    {
+                        q: "Can I use these with QuickBooks/Xero?",
+                        a: `Great question! Here's how our templates work with accounting software:\n\n✅ **Compatible** - Our templates are designed to **complement** (not replace) accounting software\n\n📊 **How they work together:**\n• Use QuickBooks/Xero for transaction recording\n• Use our templates for month-end close processes\n• Use our templates for planning & analysis\n• Use our templates for team workflows\n\n🎯 Think of it this way: Your accounting software is your database. Our templates are your workflow and planning tools.\n\nThey work together perfectly!`,
+                        ctas: []
+                    },
+                    {
+                        q: "Can I share with my team?",
+                        a: `Here's our sharing policy:\n\n✅ **Single business license** - One purchase = one business\n\n✅ **You can:**\n• Share with employees/team members at your company\n• Use across your organization\n• Print copies for your team\n\n❌ **You cannot:**\n• Resell or redistribute\n• Share with other businesses\n• Post publicly online\n\n🤝 Need licenses for multiple clients? Email us for a multi-business license.`,
+                        ctas: []
+                    }
+                ]
+            },
+            technical: {
+                title: "🛠️ Technical Questions",
+                description: "Software, formats, compatibility",
+                questions: [
+                    {
+                        q: "Do I need special software?",
+                        a: `**No special software required!** Everything works with free tools:\n\n✅ **PDF Files:**\n• Any PDF reader (Adobe Reader, Preview, etc.)\n• Available free on all devices\n\n✅ **Spreadsheets:**\n• Google Sheets (free)\n• Microsoft Excel (if you have it)\n• Apple Numbers (free on Mac)\n\n✅ **Documents:**\n• Google Docs (free)\n• Microsoft Word (if you have it)\n• Apple Pages (free on Mac)\n\n💰 **Total cost of required software: $0**`,
+                        ctas: []
+                    },
+                    {
+                        q: "Mac or PC?",
+                        a: `✅ **Both! Our templates work on:**\n\n🍎 **Mac** (macOS)\n🪟 **Windows** (PC)\n📱 **iPad/Tablet**\n📱 **iPhone/Android** (for viewing)\n\n💡 Because we use standard formats (PDF, Excel, Word), everything works on any device.\n\nYou can even start on your computer and finish on your phone!`,
+                        ctas: []
+                    },
+                    {
+                        q: "Can I customize the templates?",
+                        a: `**Absolutely!** 🎨\n\nOur templates are designed to be customizable:\n\n✅ **Spreadsheets** - Fully editable\n• Change colors\n• Add/remove rows\n• Adjust formulas\n• Add your branding\n\n✅ **PDFs** - Fill in digitally or print\n• Some PDFs are fillable forms\n• Others you can print and write on\n\n✅ **Documents** - Completely editable\n• Customize all text\n• Add your company info\n• Adjust to your needs\n\n🎯 Make them yours!`,
+                        ctas: []
+                    },
+                    {
+                        q: "Do formulas come pre-built?",
+                        a: `Yes! All our spreadsheet templates include:\n\n✅ **Pre-built formulas** - No setup required\n✅ **Automatic calculations** - Just enter your data\n✅ **Protected cells** - Formulas locked so you don't accidentally break them\n✅ **Instructions included** - Clear guidance on how to use\n\n💡 **You don't need to know Excel formulas** - we've done all the complex work for you!\n\nJust plug in your numbers and the template does the math.`,
+                        ctas: []
+                    },
+                    {
+                        q: "Can I print these?",
+                        a: `✅ **Yes! All templates are printer-friendly.**\n\n🖨️ **PDFs** - Designed for printing\n• Clean layout\n• No wasted ink\n• Professional appearance\n\n📊 **Spreadsheets** - Print-optimized\n• Proper page breaks\n• Headers repeat on each page\n• Fits standard paper\n\n💡 Some people prefer digital, some prefer paper. Both work great!\n\nUse whatever works best for YOUR workflow.`,
+                        ctas: []
+                    }
+                ]
+            },
+            about: {
+                title: "👤 About Renee",
+                description: "Background & expertise",
+                questions: [
+                    {
+                        q: "Who is Renee?",
+                        a: `Hi! I'm Renee, the founder of LedgerLift Studio. 👋\n\n📊 **15+ years** in finance and accounting\n✅ **Certified Bookkeeper**\n🏛️ **Worked with Virginia state agencies** managing complex financial systems\n💻 **Built custom Microsoft Access databases** for organizations\n\n💡 **Why I built this:**\nI watched too many amazing bootstrap founders struggle with expensive accounting software they didn't need yet, or get overwhelmed by systems built for Fortune 500 companies.\n\n🎯 I created affordable, practical tools specifically for founders in the early stages - the tools I wish I had when I started.`,
+                        ctas: []
+                    },
+                    {
+                        q: "Why should I trust these templates?",
+                        a: `Fair question! Here's why our templates are trustworthy:\n\n✅ **15+ years experience** - Built on proven systems I've used professionally\n\n✅ **Certified expertise** - Created by a Certified Bookkeeper, not a random internet guru\n\n✅ **Real-world tested** - Used in actual businesses, including government agencies\n\n✅ **Bootstrap founder focused** - Built specifically for founders at YOUR stage\n\n✅ **30-day guarantee** - If it doesn't work for you, full refund\n\n💼 I'm not selling theory. I'm sharing the actual systems I use and recommend.`,
+                        ctas: []
+                    },
+                    {
+                        q: "Is this really for bootstrap founders?",
+                        a: `**YES!** This is specifically built for bootstrap founders aged 28-40 who:\n\n💰 Can't afford $2,900 accounting software yet\n⏰ Don't have time for complex enterprise systems\n🎯 Need practical tools that work NOW\n📈 Want to build proper systems (not messy spreadsheets)\n\n❌ **Not for:**\n• Enterprise companies\n• Businesses with full accounting teams\n• Companies with $100k+ budgets for software\n\n✅ **Perfect for:**\n• Solo founders\n• Small teams (1-10 people)\n• Early-stage startups\n• Service businesses\n• Anyone who can't afford the fancy stuff yet\n\n💪 Built by a bootstrap founder, for bootstrap founders.`,
+                        ctas: []
+                    },
+                    {
+                        q: "How can I contact you?",
+                        a: `I'd love to hear from you! Here's how to reach me:\n\n📧 **Email:** hello@ledgerliftstudio.com\n💬 **Response time:** Usually within 24 hours\n\n🤝 **What I can help with:**\n• Questions about products\n• Technical support\n• Custom requests\n• Partnership opportunities\n\n💡 **Pro tip:** Check this FAQ first - you might find your answer faster!`,
+                        ctas: []
+                    }
+                ]
+            }
+        };
+
+        // Main Chatbot Component
+        function Chatbot() {
+            const [messages, setMessages] = useState([
+                {
+                    type: 'bot',
+                    content: '👋 Hi! I\'m here to answer your questions about LedgerLift Studio products, pricing, and the Journey Level system.\n\nWhat would you like to know?',
+                    showCategories: true
+                }
+            ]);
+            const [inputValue, setInputValue] = useState('');
+            const [isTyping, setIsTyping] = useState(false);
+            const messagesEndRef = useRef(null);
+
+            const scrollToBottom = () => {
+                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            useEffect(() => {
+                scrollToBottom();
+            }, [messages]);
+
+            const addMessage = (type, content, options = {}) => {
+                setMessages(prev => [...prev, { type, content, ...options }]);
+            };
+
+            const handleCategoryClick = (categoryKey) => {
+                const category = QA_DATABASE[categoryKey];
+                addMessage('user', category.title);
+                
+                setIsTyping(true);
+                setTimeout(() => {
+                    setIsTyping(false);
+                    addMessage('bot', `Great! What would you like to know about ${category.title.split(' ').slice(1).join(' ')}?`, {
+                        questions: category.questions,
+                        categoryTitle: category.title
+                    });
+                }, 800);
+            };
+
+            const handleQuestionClick = (question) => {
+                addMessage('user', question.q);
+                
+                setIsTyping(true);
+                setTimeout(() => {
+                    setIsTyping(false);
+                    addMessage('bot', question.a, {
+                        ctas: question.ctas,
+                        showRestartPrompt: true
+                    });
+                }, 1000);
+            };
+
+            const handleUserInput = () => {
+                if (!inputValue.trim()) return;
+
+                const userQuestion = inputValue;
+                addMessage('user', userQuestion);
+                setInputValue('');
+
+                setIsTyping(true);
+                setTimeout(() => {
+                    setIsTyping(false);
+                    
+                    // Simple keyword matching
+                    const lowerQuestion = userQuestion.toLowerCase();
+                    let foundAnswer = null;
+
+                    // Search through all categories for matching questions
+                    Object.values(QA_DATABASE).forEach(category => {
+                        category.questions.forEach(qa => {
+                            if (lowerQuestion.includes(qa.q.toLowerCase().split(' ').slice(0, 3).join(' '))) {
+                                foundAnswer = qa;
+                            }
+                        });
+                    });
+
+                    if (foundAnswer) {
+                        addMessage('bot', foundAnswer.a, {
+                            ctas: foundAnswer.ctas,
+                            showRestartPrompt: true
+                        });
+                    } else {
+                        addMessage('bot', `I don't have a pre-written answer for that specific question, but I'd be happy to help!\n\n📧 Please email us at hello@ledgerliftstudio.com and we'll get back to you within 24 hours.\n\nOr, try selecting a category above to see if your question is covered there!`, {
+                            showCategories: true
+                        });
+                    }
+                }, 1000);
+            };
+
+            const handleKeyPress = (e) => {
+                if (e.key === 'Enter') {
+                    handleUserInput();
+                }
+            };
+
+            return (
+                <div className="chatbot-container">
+                    <div className="chatbot-header">
+                        <div className="header-left">
+                            <div className="header-icon">💬</div>
+                            <div className="header-text">
+                                <h1>LedgerLift Studio</h1>
+                                <p>We're here to help! ✨</p>
+                            </div>
+                        </div>
+                        <button 
+                            className="back-button"
+                            onClick={() => window.open('https://stan.store/ledgerliftstudio', '_blank')}
+                        >
+                            Back to Store
+                        </button>
+                    </div>
+
+                    <div className="chatbot-body">
+                        {messages.map((message, index) => (
+                            <div key={index} className={`message ${message.type}`}>
+                                <div className="message-bubble">
+                                    {message.content.split('\n').map((line, i) => (
+                                        <React.Fragment key={i}>
+                                            {line.includes('**') ? (
+                                                <strong>{line.replace(/\*\*/g, '')}</strong>
+                                            ) : (
+                                                line
+                                            )}
+                                            {i < message.content.split('\n').length - 1 && <br />}
+                                        </React.Fragment>
+                                    ))}
+
+                                    {message.showCategories && (
+                                        <div className="quick-buttons">
+                                            {Object.entries(QA_DATABASE).map(([key, category]) => (
+                                                <div
+                                                    key={key}
+                                                    className="quick-button"
+                                                    onClick={() => handleCategoryClick(key)}
+                                                >
+                                                    <span className="quick-button-icon">
+                                                        {category.title.split(' ')[0]}
+                                                    </span>
+                                                    <div className="quick-button-text">
+                                                        <strong>{category.title.split(' ').slice(1).join(' ')}</strong>
+                                                        <small>{category.description}</small>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {message.questions && (
+                                        <div className="message-options">
+                                            {message.questions.map((q, i) => (
+                                                <button
+                                                    key={i}
+                                                    className="message-option-btn"
+                                                    onClick={() => handleQuestionClick(q)}
+                                                >
+                                                    → {q.q}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {message.ctas && message.ctas.length > 0 && (
+                                        <div className="cta-buttons">
+                                            {message.ctas.map((cta, i) => (
+                                                <button
+                                                    key={i}
+                                                    className={`cta-btn ${cta.primary ? 'primary' : 'secondary'}`}
+                                                    onClick={() => window.open(cta.url, '_blank')}
+                                                >
+                                                    {cta.text}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+
+                        {isTyping && (
+                            <div className="message bot">
+                                <div className="message-bubble">
+                                    <div className="typing-indicator">
+                                        <div className="typing-dot"></div>
+                                        <div className="typing-dot"></div>
+                                        <div className="typing-dot"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <div ref={messagesEndRef} />
+                    </div>
+
+                    <div className="chatbot-input">
+                        <input
+                            type="text"
+                            placeholder="Or type your question here..."
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                        />
+                        <button onClick={handleUserInput} disabled={!inputValue.trim()}>
+                            Send
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<Chatbot />);
+    </script>
+</body>
+</html>
