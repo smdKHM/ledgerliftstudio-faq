@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ledger Lift Studio - FAQ Chat</title>
+    <title>LedgerLift Studio - FAQ Chat</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -260,6 +260,67 @@
             box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
         }
 
+        /* NEW: Email Capture Styles */
+        .email-capture {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f0f4ff;
+            border-radius: 14px;
+            border: 2px solid #667eea;
+        }
+
+        .email-capture h3 {
+            color: #2d3748;
+            font-size: 1em;
+            margin-bottom: 15px;
+        }
+
+        .email-capture-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .email-capture input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.9em;
+            outline: none;
+        }
+
+        .email-capture input:focus {
+            border-color: #667eea;
+        }
+
+        .email-capture button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .email-capture button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .email-capture button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .email-capture .success-message {
+            color: #48bb78;
+            font-weight: 600;
+            text-align: center;
+            padding: 12px;
+        }
+
         .chatbot-input {
             background: white;
             padding: 20px;
@@ -283,31 +344,30 @@
         }
 
         .chatbot-input button {
+            padding: 15px 30px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 15px 30px;
             border-radius: 30px;
-            cursor: pointer;
             font-weight: 600;
+            cursor: pointer;
             transition: all 0.2s;
         }
 
-        .chatbot-input button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        .chatbot-input button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
         }
 
         .chatbot-input button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
         }
 
         .typing-indicator {
             display: flex;
-            gap: 5px;
-            padding: 15px 20px;
+            gap: 6px;
+            padding: 5px 0;
         }
 
         .typing-dot {
@@ -335,32 +395,23 @@
             }
         }
 
-        @media (max-width: 768px) {
-            body {
-                padding: 0;
-            }
-
+        @media (max-width: 600px) {
             .chatbot-container {
-                border-radius: 0;
                 height: 100vh;
                 max-height: none;
+                border-radius: 0;
             }
 
             .chatbot-header {
                 padding: 20px;
             }
 
-            .header-text h1 {
-                font-size: 1.2em;
-            }
-
-            .back-button {
-                padding: 8px 16px;
-                font-size: 0.85em;
-            }
-
             .message-bubble {
-                max-width: 85%;
+                max-width: 90%;
+            }
+
+            .email-capture-form {
+                flex-direction: column;
             }
         }
     </style>
@@ -371,184 +422,90 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // Q&A Database
+        // CONFIGURATION: Set your Make.com webhook URL here
+        const MAKE_WEBHOOK_URL = https://us1.make.com/public/shared-scenario/L3jf9nr3oed/integration-webhooks; // Replace this before deploying
+
+        // Q&A Database (unchanged from original)
         const QA_DATABASE = {
+            products: {
+                title: '📦 Products & Templates',
+                description: 'Learn about our digital products',
+                questions: [
+                    {
+                        q: 'What products do you offer?',
+                        a: 'We offer affordable DIY finance tools designed specifically for bootstrap founders:\n\n**Digital Templates ($7-$99):**\n• Cash Flow Template\n• Financial Level Assessment Tool\n• Bookkeeping Quickstart Guide\n• Compliance Checklist Bundle\n\n**Done-For-You Services:**\n• Bookkeeping Reset ($997)\n• Monthly Subscriptions ($97-$697)\n\nEach product is tailored to your current Financial Level (1-5).',
+                        ctas: [
+                            { text: 'View All Products', url: 'https://stan.store/ledgerliftstudio', primary: true }
+                        ]
+                    },
+                    {
+                        q: 'What is the Bookkeeping Reset service?',
+                        a: '**Bookkeeping Reset** is our signature 14-day cleanup service for founders who are behind on their books.\n\n**What\'s included:**\n• Complete catch-up bookkeeping (up to 12 months)\n• Chart of accounts optimization\n• Bank reconciliation\n• QuickBooks/Xero setup\n• Financial reports package (P&L, Balance Sheet, Cash Flow)\n• 1-hour wrap call with recommendations\n\n**Price:** $997 (fixed, all-inclusive)\n**Perfect for:** Level 2-3 founders ($50K-$300K revenue)',
+                        ctas: [
+                            { text: 'Book Free Diagnostic Call', url: 'https://cal.com/ledgerliftstudio/diagnostic', primary: true },
+                            { text: 'Learn More', url: 'https://stan.store/ledgerliftstudio', primary: false }
+                        ]
+                    }
+                ]
+            },
             pricing: {
-                title: "💰 Product & Pricing",
-                description: "What's included, costs, bundles",
+                title: '💰 Pricing',
+                description: 'Understand our pricing structure',
                 questions: [
                     {
-                        q: "What's the difference between $17 and $29?",
-                        a: `Great question! Here's the breakdown:\n\n📘 **$17 - Phase 1 Core Workbook (standalone)**\n• 12-page PDF workbook\n• Foundation exercises\n• Perfect if you just want the core content\n\n📦 **$29 - Level 1 Complete Bundle**\n• Phase 1 Core Workbook (12 pages)\n• Start Here Guide\n• Quick Start Guide\n• Daily Tracker\n• Bonus resources\n\n💎 **Best value:** The $29 bundle gives you 40% more content for just $12 more!`,
+                        q: 'How much do your services cost?',
+                        a: 'Our pricing is designed to be affordable for bootstrap founders at every stage:\n\n**Templates:** $7-$99 (one-time)\n**Bookkeeping Reset:** $997 (one-time, 14-day service)\n**Monthly Basic:** $97/month\n**Monthly Standard:** $297/month\n**CFO Service:** $697/month\n\n💡 We recommend what you actually need based on your Financial Level—no overselling!',
                         ctas: [
-                            { text: "Take the Quiz First", url: "https://journey-map-quiz.vercel.app", primary: true },
-                            { text: "View Products", url: "https://stan.store/ledgerliftstudio", primary: false }
+                            { text: 'Take Free Quiz', url: 'https://stan.store/ledgerliftstudio/p/-free-find-your-journey-level-quiz', primary: true }
                         ]
                     },
                     {
-                        q: "What's included in Level 1?",
-                        a: `Level 1: Build Yourself First (Foundations) includes:\n\n✅ **Phase 1 Core Workbook** (12 pages)\n• Life areas assessment\n• Values discovery exercises\n• Goal-setting framework\n• Habit tracking system\n\n✅ **Start Here Guide**\n• How to use the system\n• Best practices\n• Common mistakes to avoid\n\n✅ **Quick Start Guide**\n• 15-minute overview\n• Fast implementation tips\n\n✅ **Daily Tracker**\n• Track your progress\n• Build consistency\n\n✅ **Bonus Resources**\n• Additional templates\n• Reference materials`,
+                        q: 'Do you offer payment plans?',
+                        a: 'For the **Bookkeeping Reset** ($997), we offer:\n• 50% upfront ($498.50)\n• 50% on completion ($498.50)\n\n**Monthly services** are billed monthly with no long-term contracts—cancel anytime!\n\n**Templates** are one-time purchases (no payment plans needed for small amounts).',
                         ctas: [
-                            { text: "Get Level 1 Bundle", url: "https://stan.store/ledgerliftstudio", primary: true }
-                        ]
-                    },
-                    {
-                        q: "Do you offer refunds?",
-                        a: `✅ **Yes! We offer a 30-day money-back guarantee** on all products.\n\nIf you purchase a template and it doesn't work for your business, just email us within 30 days and we'll issue a full refund - no questions asked.\n\n💼 We're bootstrap founders helping bootstrap founders. We get it. Your money matters.`,
-                        ctas: [
-                            { text: "View Our Products", url: "https://stan.store/ledgerliftstudio", primary: true }
-                        ]
-                    },
-                    {
-                        q: "Are there bundle discounts?",
-                        a: `Yes! Here's how our bundles work:\n\n💰 **Current Offer:**\nBuy the **Level 1 Complete Bundle ($29)** and save compared to buying items separately.\n\n🎁 **Coming Soon:**\nWe're working on multi-level bundles that will offer even bigger savings when you purchase multiple levels together.\n\n📧 Want to be notified when bundle deals launch? Enter your email after taking the quiz!`,
-                        ctas: [
-                            { text: "Take the Quiz", url: "https://journey-map-quiz.vercel.app", primary: true }
-                        ]
-                    },
-                    {
-                        q: "What are Levels 2-5?",
-                        a: `Our **5-Level Journey System** guides you from chaos to mastery:\n\n**Level 1: Build Yourself First** ($29)\nFoundations: Personal clarity & systems\n\n**Level 2: Monthly Close Command Center** ($29)\nFinance systems: Month-end close processes\n\n**Level 3: Business Systems** (Coming Soon)\nOperations: Automate & streamline\n\n**Level 4: Scale** (Coming Soon)\nGrowth: Team building & expansion\n\n**Level 5: Master** (Coming Soon)\nOptimization: Peak performance systems\n\nTake the quiz to find out which level you're at right now!`,
-                        ctas: [
-                            { text: "Take the Journey Quiz", url: "https://journey-map-quiz.vercel.app", primary: true }
-                        ]
-                    },
-                    {
-                        q: "Is there a free trial?",
-                        a: `We don't offer free trials, but we do offer something better:\n\n✅ **Free Journey Level Quiz** - Find out exactly where you are (no purchase required)\n\n✅ **30-Day Money-Back Guarantee** - Try any product risk-free for a full month\n\n✅ **Free Resources** - Get helpful templates and guides when you take the quiz\n\nThis way, you can make an informed decision before buying, and if it's not right for you, get a full refund!`,
-                        ctas: [
-                            { text: "Take Free Quiz", url: "https://journey-map-quiz.vercel.app", primary: true }
+                            { text: 'Book Diagnostic Call', url: 'https://cal.com/ledgerliftstudio/diagnostic', primary: true }
                         ]
                     }
                 ]
             },
-            quiz: {
-                title: "🎯 About the Quiz",
-                description: "How it works, what happens next",
+            levels: {
+                title: '🎯 Journey Levels',
+                description: 'Understand the 5 Financial Levels',
                 questions: [
                     {
-                        q: "How long does the quiz take?",
-                        a: `⏱️ The Journey Level Quiz takes about **2-3 minutes** to complete.\n\nYou'll answer 8-10 questions about your current business finances, and we'll instantly show you which of our 5 levels you're at.\n\n✅ **No email required** to see your results!\n💌 But we recommend entering your email so we can send you personalized resources for your specific level.`,
+                        q: 'What are the 5 Financial Levels?',
+                        a: 'The **5 Financial Levels Framework** helps you identify where you are and what you need next:\n\n**Level 1 ($0-$50K):** DIY with templates\n**Level 2 ($50K-$150K):** Need cleanup/reset\n**Level 3 ($150K-$300K):** Need ongoing support\n**Level 4 ($300K-$500K):** Need CFO guidance\n**Level 5 ($500K+):** Need full financial team\n\nKnowing your level helps you invest in the RIGHT solution—not too little, not too much.',
                         ctas: [
-                            { text: "Take the Quiz Now", url: "https://journey-map-quiz.vercel.app", primary: true },
-                            { text: "Learn About Levels", url: "https://stan.store/ledgerliftstudio", primary: false }
+                            { text: 'Find Your Level (Free Quiz)', url: 'https://stan.store/ledgerliftstudio/p/-free-find-your-journey-level-quiz', primary: true }
                         ]
                     },
                     {
-                        q: "What happens after I take the quiz?",
-                        a: `Here's exactly what happens:\n\n1️⃣ **See your results instantly** - No waiting, immediate feedback\n\n2️⃣ **Get a custom email** - Resources tailored to your specific level\n\n3️⃣ **Access free templates** - Helpful tools designed for where you are now\n\n4️⃣ **Optional purchase** - Buy the complete system for your level (only if you want to)\n\n📧 No spam. No hard sell. Just helpful resources tailored to YOUR business stage.`,
+                        q: 'How do I know which level I\'m at?',
+                        a: 'Take our **free 2-minute assessment**! It asks about:\n• Your current revenue\n• How you handle bookkeeping now\n• Your biggest challenges\n• What you need help with\n\nYou\'ll get instant results showing your Financial Level plus a personalized action plan.',
                         ctas: [
-                            { text: "Take the Quiz", url: "https://journey-map-quiz.vercel.app", primary: true }
-                        ]
-                    },
-                    {
-                        q: "Do I have to buy something to take the quiz?",
-                        a: `**Absolutely not!** ✅\n\nThe Journey Level Quiz is **100% free**, with no purchase required.\n\n🎯 The quiz helps you understand where you are in your business journey\n📊 You'll get free resources based on your level\n💡 You'll learn what to focus on next\n\nIf you find value and want the complete system for your level, you can purchase it. But there's zero pressure or obligation.`,
-                        ctas: [
-                            { text: "Take Free Quiz", url: "https://journey-map-quiz.vercel.app", primary: true }
-                        ]
-                    },
-                    {
-                        q: "What is the Journey Level system?",
-                        a: `The **Journey Level System** is our framework that maps your business financial maturity across 5 progressive stages:\n\n🏗️ **Level 1: Build** - Foundation & personal clarity\n💰 **Level 2: Close** - Financial reporting systems\n⚙️ **Level 3: Systems** - Business automation\n📈 **Level 4: Scale** - Growth & team building\n🎯 **Level 5: Master** - Peak optimization\n\nInstead of generic advice, you get tools and strategies specifically designed for YOUR current stage.\n\nNo more feeling overwhelmed by advice for companies 10 steps ahead of you!`,
-                        ctas: [
-                            { text: "Find Your Level", url: "https://journey-map-quiz.vercel.app", primary: true }
-                        ]
-                    },
-                    {
-                        q: "Can I retake the quiz?",
-                        a: `Yes! You can retake the quiz anytime. 🔄\n\nIn fact, we **encourage** retaking it every 3-6 months as your business evolves.\n\n📊 Your level will likely change as you:\n• Implement new systems\n• Grow your business\n• Build better processes\n\nWatching yourself progress from Level 1 → Level 2 → Level 3 is incredibly motivating!`,
-                        ctas: [
-                            { text: "Take Quiz Now", url: "https://journey-map-quiz.vercel.app", primary: true }
+                            { text: 'Take the Quiz Now', url: 'https://stan.store/ledgerliftstudio/p/-free-find-your-journey-level-quiz', primary: true }
                         ]
                     }
                 ]
             },
-            delivery: {
-                title: "📦 Delivery & Access",
-                description: "How to get your templates",
+            getting_started: {
+                title: '🚀 Getting Started',
+                description: 'How to work with us',
                 questions: [
                     {
-                        q: "How do I access my purchase?",
-                        a: `Getting your products is super simple:\n\n1️⃣ **Instant delivery** - Files are delivered immediately after purchase\n\n2️⃣ **Download link** - Check your email for the download link\n\n3️⃣ **Stan Store account** - Also accessible in your Stan Store account anytime\n\n4️⃣ **Save your files** - Download and save to your computer/cloud\n\n💡 **Pro tip:** Save files to Google Drive or Dropbox so you never lose them!`,
-                        ctas: []
+                        q: 'How do I get started?',
+                        a: 'Getting started is easy! Here\'s the process:\n\n**Step 1:** Take the free Financial Level Quiz (2 minutes)\n**Step 2:** Book a free 15-minute diagnostic call\n**Step 3:** Get your personalized recommendation\n**Step 4:** Choose your solution (template, service, or subscription)\n\n**No pressure, no pitch—just clarity on what you actually need.**',
+                        ctas: [
+                            { text: 'Book Free Call', url: 'https://cal.com/ledgerliftstudio/diagnostic', primary: true },
+                            { text: 'Take Quiz First', url: 'https://stan.store/ledgerliftstudio/p/-free-find-your-journey-level-quiz', primary: false }
+                        ]
                     },
                     {
-                        q: "Is this instant delivery?",
-                        a: `✅ **Yes! Delivery is 100% instant.**\n\nAs soon as your payment processes:\n• You'll see a download page\n• You'll receive an email with download links\n• Files are accessible in your Stan Store account\n\nNo waiting. No delays. Instant access to start working immediately.\n\n⚡ Average time from purchase to download: **Less than 60 seconds!**`,
-                        ctas: []
-                    },
-                    {
-                        q: "What format are the templates?",
-                        a: `Our templates come in multiple formats:\n\n📄 **PDF Files** - Most workbooks and guides\n• Easy to view on any device\n• Printable\n• Can fill in digitally or by hand\n\n📊 **Excel/Google Sheets** - Financial templates\n• Fully editable\n• Formulas included\n• Works with Excel, Google Sheets, Numbers\n\n📝 **Word/Google Docs** - Some worksheets\n• Fully customizable\n• Easy to edit and personalize\n\n💡 Everything is designed to work with free tools - no expensive software required!`,
-                        ctas: []
-                    },
-                    {
-                        q: "Can I use these with QuickBooks/Xero?",
-                        a: `Great question! Here's how our templates work with accounting software:\n\n✅ **Compatible** - Our templates are designed to **complement** (not replace) accounting software\n\n📊 **How they work together:**\n• Use QuickBooks/Xero for transaction recording\n• Use our templates for month-end close processes\n• Use our templates for planning & analysis\n• Use our templates for team workflows\n\n🎯 Think of it this way: Your accounting software is your database. Our templates are your workflow and planning tools.\n\nThey work together perfectly!`,
-                        ctas: []
-                    },
-                    {
-                        q: "Can I share with my team?",
-                        a: `Here's our sharing policy:\n\n✅ **Single business license** - One purchase = one business\n\n✅ **You can:**\n• Share with employees/team members at your company\n• Use across your organization\n• Print copies for your team\n\n❌ **You cannot:**\n• Resell or redistribute\n• Share with other businesses\n• Post publicly online\n\n🤝 Need licenses for multiple clients? Email us for a multi-business license.`,
-                        ctas: []
-                    }
-                ]
-            },
-            technical: {
-                title: "🛠️ Technical Questions",
-                description: "Software, formats, compatibility",
-                questions: [
-                    {
-                        q: "Do I need special software?",
-                        a: `**No special software required!** Everything works with free tools:\n\n✅ **PDF Files:**\n• Any PDF reader (Adobe Reader, Preview, etc.)\n• Available free on all devices\n\n✅ **Spreadsheets:**\n• Google Sheets (free)\n• Microsoft Excel (if you have it)\n• Apple Numbers (free on Mac)\n\n✅ **Documents:**\n• Google Docs (free)\n• Microsoft Word (if you have it)\n• Apple Pages (free on Mac)\n\n💰 **Total cost of required software: $0**`,
-                        ctas: []
-                    },
-                    {
-                        q: "Mac or PC?",
-                        a: `✅ **Both! Our templates work on:**\n\n🍎 **Mac** (macOS)\n🪟 **Windows** (PC)\n📱 **iPad/Tablet**\n📱 **iPhone/Android** (for viewing)\n\n💡 Because we use standard formats (PDF, Excel, Word), everything works on any device.\n\nYou can even start on your computer and finish on your phone!`,
-                        ctas: []
-                    },
-                    {
-                        q: "Can I customize the templates?",
-                        a: `**Absolutely!** 🎨\n\nOur templates are designed to be customizable:\n\n✅ **Spreadsheets** - Fully editable\n• Change colors\n• Add/remove rows\n• Adjust formulas\n• Add your branding\n\n✅ **PDFs** - Fill in digitally or print\n• Some PDFs are fillable forms\n• Others you can print and write on\n\n✅ **Documents** - Completely editable\n• Customize all text\n• Add your company info\n• Adjust to your needs\n\n🎯 Make them yours!`,
-                        ctas: []
-                    },
-                    {
-                        q: "Do formulas come pre-built?",
-                        a: `Yes! All our spreadsheet templates include:\n\n✅ **Pre-built formulas** - No setup required\n✅ **Automatic calculations** - Just enter your data\n✅ **Protected cells** - Formulas locked so you don't accidentally break them\n✅ **Instructions included** - Clear guidance on how to use\n\n💡 **You don't need to know Excel formulas** - we've done all the complex work for you!\n\nJust plug in your numbers and the template does the math.`,
-                        ctas: []
-                    },
-                    {
-                        q: "Can I print these?",
-                        a: `✅ **Yes! All templates are printer-friendly.**\n\n🖨️ **PDFs** - Designed for printing\n• Clean layout\n• No wasted ink\n• Professional appearance\n\n📊 **Spreadsheets** - Print-optimized\n• Proper page breaks\n• Headers repeat on each page\n• Fits standard paper\n\n💡 Some people prefer digital, some prefer paper. Both work great!\n\nUse whatever works best for YOUR workflow.`,
-                        ctas: []
-                    }
-                ]
-            },
-            about: {
-                title: "👤 About Renee",
-                description: "Background & expertise",
-                questions: [
-                    {
-                        q: "Who is Renee?",
-                        a: `Hi! I'm Renee, the founder of Ledger Lift Studio. 👋\n\n📊 **15+ years** in finance and accounting\n✅ **Certified Bookkeeper**\n🏛️ **Worked with Virginia state agencies** managing complex financial systems\n💻 **Built custom Microsoft Access databases** for organizations\n\n💡 **Why I built this:**\nI watched too many amazing bootstrap founders struggle with expensive accounting software they didn't need yet, or get overwhelmed by systems built for Fortune 500 companies.\n\n🎯 I created affordable, practical tools specifically for founders in the early stages - the tools I wish I had when I started.`,
-                        ctas: []
-                    },
-                    {
-                        q: "Why should I trust these templates?",
-                        a: `Fair question! Here's why our templates are trustworthy:\n\n✅ **15+ years experience** - Built on proven systems I've used professionally\n\n✅ **Certified expertise** - Created by a Certified Bookkeeper, not a random internet guru\n\n✅ **Real-world tested** - Used in actual businesses, including government agencies\n\n✅ **Bootstrap founder focused** - Built specifically for founders at YOUR stage\n\n✅ **30-day guarantee** - If it doesn't work for you, full refund\n\n💼 I'm not selling theory. I'm sharing the actual systems I use and recommend.`,
-                        ctas: []
-                    },
-                    {
-                        q: "Is this really for bootstrap founders?",
-                        a: `**YES!** This is specifically built for bootstrap founders aged 28-40 who:\n\n💰 Can't afford $2,900 accounting software yet\n⏰ Don't have time for complex enterprise systems\n🎯 Need practical tools that work NOW\n📈 Want to build proper systems (not messy spreadsheets)\n\n❌ **Not for:**\n• Enterprise companies\n• Businesses with full accounting teams\n• Companies with $100k+ budgets for software\n\n✅ **Perfect for:**\n• Solo founders\n• Small teams (1-10 people)\n• Early-stage startups\n• Service businesses\n• Anyone who can't afford the fancy stuff yet\n\n💪 Built by a bootstrap founder, for bootstrap founders.`,
-                        ctas: []
-                    },
-                    {
-                        q: "How can I contact you?",
-                        a: `I'd love to hear from you! Here's how to reach me:\n\n📧 **Email:** hello@ledgerliftstudio.com\n💬 **Response time:** Usually within 24 hours\n\n🤝 **What I can help with:**\n• Questions about products\n• Technical support\n• Custom requests\n• Partnership opportunities\n\n💡 **Pro tip:** Check this FAQ first - you might find your answer faster!`,
-                        ctas: []
+                        q: 'What is a diagnostic call?',
+                        a: '**Diagnostic Call Details:**\n• **Duration:** 15 minutes\n• **Cost:** Free\n• **Format:** Zoom video call\n• **What we cover:**\n  - Your current bookkeeping situation\n  - Identify your Financial Level\n  - Show you exactly what\'s broken\n  - Recommend the right solution\n\n**No pitch. Just clarity.** You\'ll walk away knowing exactly what you need to do next.',
+                        ctas: [
+                            { text: 'Book Your Free Call', url: 'https://cal.com/ledgerliftstudio/diagnostic', primary: true }
+                        ]
                     }
                 ]
             }
@@ -559,12 +516,19 @@
             const [messages, setMessages] = useState([
                 {
                     type: 'bot',
-                    content: '👋 Hi! I\'m here to answer your questions about Ledger Lift Studio products, pricing, and the Journey Level system.\n\nWhat would you like to know?',
+                    content: '👋 Hi! I\'m here to answer your questions about LedgerLift Studio products, pricing, and the Journey Level system.\n\nWhat would you like to know?',
                     showCategories: true
                 }
             ]);
             const [inputValue, setInputValue] = useState('');
             const [isTyping, setIsTyping] = useState(false);
+            const [emailCaptured, setEmailCaptured] = useState(false);
+            const [conversationData, setConversationData] = useState({
+                questionsAsked: [],
+                ctasClicked: [],
+                estimatedLevel: null,
+                startTime: new Date().toISOString()
+            });
             const messagesEndRef = useRef(null);
 
             const scrollToBottom = () => {
@@ -575,6 +539,53 @@
                 scrollToBottom();
             }, [messages]);
 
+            // NEW: Send data to Make.com
+            const sendToMake = async (data) => {
+                if (MAKE_WEBHOOK_URL === 'YOUR_MAKE_WEBHOOK_URL_HERE') {
+                    console.log('Make.com webhook not configured. Data:', data);
+                    return;
+                }
+
+                try {
+                    await fetch(MAKE_WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                } catch (error) {
+                    console.error('Error sending to Make.com:', error);
+                }
+            };
+
+            // NEW: Estimate Financial Level based on questions asked
+            const estimateFinancialLevel = (questions) => {
+                const keywords = {
+                    'level1': ['template', 'diy', 'starting', 'new'],
+                    'level2': ['reset', 'cleanup', 'behind', 'mess'],
+                    'level3': ['monthly', 'ongoing', 'support', 'regular'],
+                    'level4': ['cfo', 'strategic', 'guidance', 'planning']
+                };
+
+                const scores = { level1: 0, level2: 0, level3: 0, level4: 0 };
+
+                questions.forEach(q => {
+                    const lowerQ = q.toLowerCase();
+                    Object.keys(keywords).forEach(level => {
+                        keywords[level].forEach(keyword => {
+                            if (lowerQ.includes(keyword)) {
+                                scores[level]++;
+                            }
+                        });
+                    });
+                });
+
+                const maxScore = Math.max(...Object.values(scores));
+                if (maxScore === 0) return 'Unknown';
+
+                const estimatedLevel = Object.keys(scores).find(key => scores[key] === maxScore);
+                return estimatedLevel.replace('level', 'Level ');
+            };
+
             const addMessage = (type, content, options = {}) => {
                 setMessages(prev => [...prev, { type, content, ...options }]);
             };
@@ -583,6 +594,12 @@
                 const category = QA_DATABASE[categoryKey];
                 addMessage('user', category.title);
                 
+                // Track question
+                setConversationData(prev => ({
+                    ...prev,
+                    questionsAsked: [...prev.questionsAsked, category.title]
+                }));
+
                 setIsTyping(true);
                 setTimeout(() => {
                     setIsTyping(false);
@@ -590,12 +607,22 @@
                         questions: category.questions,
                         categoryTitle: category.title
                     });
+
+                    // NEW: Show email capture after 2 bot responses
+                    checkForEmailCapture();
                 }, 800);
             };
 
             const handleQuestionClick = (question) => {
                 addMessage('user', question.q);
                 
+                // Track question
+                setConversationData(prev => ({
+                    ...prev,
+                    questionsAsked: [...prev.questionsAsked, question.q],
+                    estimatedLevel: estimateFinancialLevel([...prev.questionsAsked, question.q])
+                }));
+
                 setIsTyping(true);
                 setTimeout(() => {
                     setIsTyping(false);
@@ -603,7 +630,61 @@
                         ctas: question.ctas,
                         showRestartPrompt: true
                     });
+
+                    // NEW: Show email capture after 2 bot responses
+                    checkForEmailCapture();
                 }, 1000);
+            };
+
+            // NEW: Check if we should show email capture
+            const checkForEmailCapture = () => {
+                const botMessages = messages.filter(m => m.type === 'bot').length;
+                if (botMessages >= 2 && !emailCaptured) {
+                    setTimeout(() => {
+                        addMessage('bot', '💡 Want a personalized Financial Level action plan sent to your email?', {
+                            showEmailCapture: true
+                        });
+                    }, 1500);
+                }
+            };
+
+            // NEW: Handle email submission
+            const handleEmailSubmit = async (email) => {
+                setEmailCaptured(true);
+
+                // Send to Make.com
+                await sendToMake({
+                    type: 'email_captured',
+                    email: email,
+                    estimatedLevel: conversationData.estimatedLevel,
+                    questionsAsked: conversationData.questionsAsked,
+                    timestamp: new Date().toISOString()
+                });
+
+                addMessage('bot', '✅ Perfect! Check your email in the next few minutes for your personalized action plan.\n\nAnything else I can help with?', {
+                    showCategories: true
+                });
+            };
+
+            // NEW: Handle CTA clicks with tracking
+            const handleCTAClick = async (cta) => {
+                // Track CTA click
+                setConversationData(prev => ({
+                    ...prev,
+                    ctasClicked: [...prev.ctasClicked, cta.text]
+                }));
+
+                // Send to Make.com
+                await sendToMake({
+                    type: 'cta_clicked',
+                    ctaText: cta.text,
+                    ctaUrl: cta.url,
+                    estimatedLevel: conversationData.estimatedLevel,
+                    questionsAsked: conversationData.questionsAsked,
+                    timestamp: new Date().toISOString()
+                });
+
+                window.open(cta.url, '_blank');
             };
 
             const handleUserInput = () => {
@@ -612,6 +693,13 @@
                 const userQuestion = inputValue;
                 addMessage('user', userQuestion);
                 setInputValue('');
+
+                // Track question
+                setConversationData(prev => ({
+                    ...prev,
+                    questionsAsked: [...prev.questionsAsked, userQuestion],
+                    estimatedLevel: estimateFinancialLevel([...prev.questionsAsked, userQuestion])
+                }));
 
                 setIsTyping(true);
                 setTimeout(() => {
@@ -640,6 +728,9 @@
                             showCategories: true
                         });
                     }
+
+                    // Check for email capture
+                    checkForEmailCapture();
                 }, 1000);
             };
 
@@ -655,7 +746,7 @@
                         <div className="header-left">
                             <div className="header-icon">💬</div>
                             <div className="header-text">
-                                <h1>Ledger Lift Studio</h1>
+                                <h1>LedgerLift Studio</h1>
                                 <p>We're here to help! ✨</p>
                             </div>
                         </div>
@@ -722,12 +813,17 @@
                                                 <button
                                                     key={i}
                                                     className={`cta-btn ${cta.primary ? 'primary' : 'secondary'}`}
-                                                    onClick={() => window.open(cta.url, '_blank')}
+                                                    onClick={() => handleCTAClick(cta)}
                                                 >
                                                     {cta.text}
                                                 </button>
                                             ))}
                                         </div>
+                                    )}
+
+                                    {/* NEW: Email Capture Component */}
+                                    {message.showEmailCapture && !emailCaptured && (
+                                        <EmailCapture onSubmit={handleEmailSubmit} />
                                     )}
                                 </div>
                             </div>
@@ -760,6 +856,46 @@
                             Send
                         </button>
                     </div>
+                </div>
+            );
+        }
+
+        // NEW: Email Capture Component
+        function EmailCapture({ onSubmit }) {
+            const [email, setEmail] = useState('');
+            const [submitted, setSubmitted] = useState(false);
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (email && email.includes('@')) {
+                    setSubmitted(true);
+                    onSubmit(email);
+                }
+            };
+
+            if (submitted) {
+                return (
+                    <div className="email-capture">
+                        <div className="success-message">✅ Sent! Check your email.</div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="email-capture">
+                    <h3>📧 Get Your Personalized Action Plan</h3>
+                    <form className="email-capture-form" onSubmit={handleSubmit}>
+                        <input
+                            type="email"
+                            placeholder="your@email.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                        <button type="submit" disabled={!email.includes('@')}>
+                            Send It
+                        </button>
+                    </form>
                 </div>
             );
         }
