@@ -3,827 +3,649 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LedgerLift Studio - FAQ Chat</title>
+    <title>LedgerLift Studio - Financial Health Check</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0F1F3D 0%, #1a3a5c 50%, #0F1F3D 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-
-        #root {
-            width: 100%;
-            max-width: 800px;
-        }
-
+        #root { width: 100%; max-width: 800px; }
         .chatbot-container {
-            background: white;
+            background: #fff;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
             display: flex;
             flex-direction: column;
             height: 90vh;
-            max-height: 800px;
+            max-height: 820px;
         }
-
         .chatbot-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 25px;
+            background: #0F1F3D;
+            color: #fff;
+            padding: 22px 25px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-bottom: 3px solid #C9A84C;
         }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
+        .header-left { display: flex; align-items: center; gap: 14px; }
         .header-icon {
-            width: 50px;
-            height: 50px;
-            background: white;
+            width: 46px; height: 46px;
+            background: #C9A84C;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; font-weight: 700; color: #0F1F3D;
         }
-
-        .header-text h1 {
-            font-size: 1.4em;
-            margin-bottom: 3px;
-        }
-
-        .header-text p {
-            font-size: 0.9em;
-            opacity: 0.9;
-        }
-
+        .header-text h1 { font-size: 1.25em; margin-bottom: 2px; letter-spacing: 0.3px; }
+        .header-text p { font-size: 0.82em; opacity: 0.75; font-weight: 400; }
         .back-button {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
+            background: rgba(201,168,76,0.15);
+            border: 1px solid rgba(201,168,76,0.4);
+            color: #C9A84C;
+            padding: 9px 18px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.9em;
+            font-size: 0.85em;
             font-weight: 500;
             transition: all 0.2s;
+            text-decoration: none;
         }
-
-        .back-button:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
+        .back-button:hover { background: rgba(201,168,76,0.25); }
         .chatbot-body {
             flex: 1;
-            background: #f7fafc;
-            padding: 25px;
+            background: #f8f9fb;
+            padding: 24px;
             overflow-y: auto;
         }
-
-        .chatbot-body::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .chatbot-body::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        .chatbot-body::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 4px;
-        }
-
-        .message {
-            margin-bottom: 20px;
-            display: flex;
-            animation: fadeIn 0.3s ease-in;
-        }
-
+        .chatbot-body::-webkit-scrollbar { width: 6px; }
+        .chatbot-body::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 3px; }
+        .message { margin-bottom: 18px; display: flex; animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .message.bot {
-            justify-content: flex-start;
-        }
-
-        .message.user {
-            justify-content: flex-end;
-        }
-
+        .message.bot { justify-content: flex-start; }
+        .message.user { justify-content: flex-end; }
         .message-bubble {
-            padding: 15px 20px;
-            border-radius: 18px;
-            max-width: 80%;
-            font-size: 0.95em;
-            line-height: 1.6;
+            padding: 16px 20px;
+            border-radius: 16px;
+            max-width: 85%;
+            font-size: 0.93em;
+            line-height: 1.65;
         }
-
         .message.bot .message-bubble {
-            background: white;
-            color: #2d3748;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            background: #fff;
+            color: #1a2a3a;
+            border: 1px solid #e4e8ed;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
         }
-
         .message.user .message-bubble {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #0F1F3D;
+            color: #fff;
         }
-
-        .quick-buttons {
-            display: grid;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .quick-button {
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 18px;
+        .pain-buttons { display: grid; gap: 10px; margin-top: 18px; }
+        .pain-button {
+            background: #fff;
+            border: 2px solid #e4e8ed;
+            border-radius: 12px;
+            padding: 16px;
             text-align: left;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 14px;
         }
-
-        .quick-button:hover {
-            border-color: #667eea;
-            background: #f0f4ff;
+        .pain-button:hover {
+            border-color: #C9A84C;
+            background: #fffcf5;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+            box-shadow: 0 4px 12px rgba(201,168,76,0.12);
         }
-
-        .quick-button-icon {
-            font-size: 28px;
-            min-width: 35px;
-        }
-
-        .quick-button-text strong {
-            display: block;
-            color: #2d3748;
-            margin-bottom: 3px;
-            font-size: 1em;
-        }
-
-        .quick-button-text small {
-            color: #718096;
-            font-size: 0.85em;
-        }
-
-        .message-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .message-option-btn {
-            background: white;
-            border: 2px solid #667eea;
-            color: #667eea;
-            padding: 12px 18px;
-            border-radius: 12px;
+        .pain-icon { font-size: 26px; min-width: 34px; text-align: center; }
+        .pain-text strong { display: block; color: #1a2a3a; margin-bottom: 2px; font-size: 0.95em; }
+        .pain-text small { color: #6b7a8d; font-size: 0.82em; line-height: 1.4; }
+        .followup-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+        .followup-btn {
+            background: #fff;
+            border: 2px solid #0F1F3D;
+            color: #0F1F3D;
+            padding: 12px 16px;
+            border-radius: 10px;
             font-size: 0.9em;
             cursor: pointer;
             transition: all 0.2s;
             text-align: left;
             font-weight: 500;
         }
-
-        .message-option-btn:hover {
-            background: #667eea;
-            color: white;
-            transform: translateX(5px);
+        .followup-btn:hover {
+            background: #0F1F3D;
+            color: #fff;
+            transform: translateX(4px);
         }
-
-        .cta-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
+        .cta-buttons { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
         .cta-btn {
             padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 0.9em;
+            border-radius: 10px;
+            font-size: 0.88em;
             cursor: pointer;
             border: none;
             transition: all 0.2s;
             font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
         }
-
-        .cta-btn.primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .cta-btn.secondary {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .cta-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
-        }
-
-        /* NEW: Email Capture Styles */
+        .cta-btn.primary { background: #C9A84C; color: #0F1F3D; }
+        .cta-btn.secondary { background: #fff; color: #0F1F3D; border: 2px solid #0F1F3D; }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
         .email-capture {
-            margin-top: 20px;
-            padding: 20px;
-            background: #f0f4ff;
-            border-radius: 14px;
-            border: 2px solid #667eea;
+            margin-top: 18px; padding: 18px;
+            background: #fffcf5;
+            border-radius: 12px;
+            border: 2px solid #C9A84C;
         }
-
-        .email-capture h3 {
-            color: #2d3748;
-            font-size: 1em;
-            margin-bottom: 15px;
-        }
-
-        .email-capture-form {
-            display: flex;
-            gap: 10px;
-        }
-
+        .email-capture h3 { color: #1a2a3a; font-size: 0.95em; margin-bottom: 12px; }
+        .email-capture-form { display: flex; gap: 10px; }
         .email-capture input {
-            flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 0.9em;
-            outline: none;
+            flex: 1; padding: 12px 14px;
+            border: 2px solid #e4e8ed;
+            border-radius: 8px; font-size: 0.9em; outline: none;
         }
-
-        .email-capture input:focus {
-            border-color: #667eea;
-        }
-
+        .email-capture input:focus { border-color: #C9A84C; }
         .email-capture button {
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
+            padding: 12px 22px;
+            background: #C9A84C; color: #0F1F3D;
+            border: none; border-radius: 8px;
+            font-weight: 600; cursor: pointer; transition: all 0.2s;
         }
-
-        .email-capture button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        .email-capture button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(201,168,76,0.3); }
+        .email-capture button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .email-capture .success-msg { color: #2d8659; font-weight: 600; text-align: center; padding: 12px; }
+        .restart-link {
+            display: inline-block; margin-top: 14px;
+            color: #C9A84C; font-weight: 500; font-size: 0.88em;
+            cursor: pointer; text-decoration: underline;
         }
-
-        .email-capture button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .email-capture .success-message {
-            color: #48bb78;
-            font-weight: 600;
-            text-align: center;
-            padding: 12px;
-        }
-
-        .chatbot-input {
-            background: white;
-            padding: 20px;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            gap: 12px;
-        }
-
-        .chatbot-input input {
-            flex: 1;
-            padding: 15px 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 30px;
-            font-size: 0.95em;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .chatbot-input input:focus {
-            border-color: #667eea;
-        }
-
-        .chatbot-input button {
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .chatbot-input button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
-        }
-
-        .chatbot-input button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .typing-indicator {
-            display: flex;
-            gap: 6px;
-            padding: 5px 0;
-        }
-
+        .restart-link:hover { color: #0F1F3D; }
+        .typing-indicator { display: flex; gap: 5px; padding: 4px 0; }
         .typing-dot {
-            width: 8px;
-            height: 8px;
-            background: #667eea;
-            border-radius: 50%;
+            width: 7px; height: 7px;
+            background: #C9A84C; border-radius: 50%;
             animation: typing 1.4s infinite;
         }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
         @keyframes typing {
-            0%, 60%, 100% {
-                transform: translateY(0);
-            }
-            30% {
-                transform: translateY(-10px);
-            }
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
         }
-
+        .chatbot-input {
+            background: #fff; padding: 18px 20px;
+            border-top: 1px solid #e4e8ed;
+            display: flex; gap: 10px;
+        }
+        .chatbot-input input {
+            flex: 1; padding: 14px 18px;
+            border: 2px solid #e4e8ed;
+            border-radius: 25px; font-size: 0.93em; outline: none;
+        }
+        .chatbot-input input:focus { border-color: #C9A84C; }
+        .chatbot-input button {
+            padding: 14px 26px;
+            background: #0F1F3D; color: #fff;
+            border: none; border-radius: 25px;
+            font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .chatbot-input button:hover:not(:disabled) {
+            background: #1a3a5c;
+            box-shadow: 0 4px 12px rgba(15,31,61,0.3);
+        }
+        .chatbot-input button:disabled { opacity: 0.4; cursor: not-allowed; }
         @media (max-width: 600px) {
-            .chatbot-container {
-                height: 100vh;
-                max-height: none;
-                border-radius: 0;
-            }
-
-            .chatbot-header {
-                padding: 20px;
-            }
-
-            .message-bubble {
-                max-width: 90%;
-            }
-
-            .email-capture-form {
-                flex-direction: column;
-            }
+            body { padding: 0; }
+            .chatbot-container { height: 100vh; max-height: none; border-radius: 0; }
+            .chatbot-header { padding: 18px; }
+            .header-text h1 { font-size: 1.1em; }
+            .message-bubble { max-width: 92%; }
+            .email-capture-form { flex-direction: column; }
+            .cta-buttons { flex-direction: column; }
         }
     </style>
 </head>
 <body>
     <div id="root"></div>
-
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // CONFIGURATION: Set your Make.com webhook URL here
-        const MAKE_WEBHOOK_URL = 'https://hook.us1.make.com/b37ou4y72fnod6xcntv075q51s3i5ve0'; // Replace this before deploying
+        // Make.com webhook — sends lead data
+        const MAKE_WEBHOOK_URL = 'https://hook.us1.make.com/b37ou4y72fnod6xcntv075q51s3i5ve0';
 
-        // Q&A Database (unchanged from original)
-        const QA_DATABASE = {
-            products: {
-                title: '📦 Products & Templates',
-                description: 'Learn about our digital products',
-                questions: [
+        // ─── PAIN POINT CONVERSATION DATA ───
+        // Mapped from Reddit research (Perplexity Aug 2026)
+        // Products: current verified line only
+
+        const PAIN_POINTS = {
+            receipts: {
+                icon: '📑',
+                title: 'My receipts and records are scattered everywhere',
+                subtitle: 'Email, photos, Dropbox, wallet — no single system',
+                empathy: "That's the most common thing I see in founder books. Receipts in email, photos on your phone, statements in a folder somewhere, and none of it connected to actual transactions. The problem isn't that you don't have proof — it's that you can't find it or connect it when you need it.",
+                followup: "How are you tracking your finances right now?",
+                options: [
                     {
-                        q: 'What products do you offer?',
-                        a: 'We offer affordable DIY finance tools designed specifically for bootstrap founders:\n\n**Digital Templates ($7-$99):**\n• Cash Flow Template\n• Financial Level Assessment Tool\n• Bookkeeping Quickstart Guide\n• Compliance Checklist Bundle\n\n**Done-For-You Services:**\n• Bookkeeping Reset ($997)\n• Monthly Subscriptions ($97-$697)\n\nEach product is tailored to your current Financial Level (1-5).',
+                        label: "Spreadsheet, shoebox, or basically nothing",
+                        response: "If you're starting from scratch or running on a spreadsheet, the first step isn't software — it's figuring out where you actually stand.\n\nThe free diagnostic takes about 2 minutes and scores your bookkeeping maturity. It tells you exactly what stage you're at and what the right next step is — no guessing, no sales pitch.",
                         ctas: [
-                            { text: 'View All Products', url: 'https://stan.store/ledgerliftstudio', primary: true }
-                        ]
+                            { text: 'Take the Free Diagnostic', url: 'https://diagnostic.ledgerliftstudio.com', primary: true }
+                        ],
+                        level: 'Level 1'
                     },
                     {
-                        q: 'What is the Bookkeeping Reset service?',
-                        a: '**Bookkeeping Reset** is our signature 14-day cleanup service for founders who are behind on their books.\n\n**What\'s included:**\n• Complete catch-up bookkeeping (up to 12 months)\n• Chart of accounts optimization\n• Bank reconciliation\n• QuickBooks/Xero setup\n• Financial reports package (P&L, Balance Sheet, Cash Flow)\n• 1-hour wrap call with recommendations\n\n**Price:** $997 (fixed, all-inclusive)\n**Perfect for:** Level 2-3 founders ($50K-$300K revenue)',
+                        label: "I have software but it's a disorganized mess",
+                        response: "You've got the raw material — it's just not structured. What you need is a system where every transaction is linked to its evidence, every category maps to your actual tax filing, and anything unresolved is flagged instead of buried.\n\nLedgerDesk Solo ($197) is an Airtable-based financial system I built from real client data. You own it — it runs in your own Airtable account. Transactions, categories, evidence links, monthly close tracking, and a dashboard that shows you what's settled and what still needs your attention.",
                         ctas: [
-                            { text: 'Book Free Diagnostic Call', url: 'https://cal.com/ledgerliftstudio/diagnostic', primary: true },
-                            { text: 'Learn More', url: 'https://stan.store/ledgerliftstudio', primary: false }
-                        ]
+                            { text: 'See LedgerDesk Solo — $197', url: 'https://stan.store/Ledgerliftstudio/p/ledgerdesk-solo--bookkeeping-for-founders', primary: true },
+                            { text: 'View all products', url: 'https://stan.store/ledgerliftstudio', primary: false }
+                        ],
+                        level: 'Level 3'
                     }
                 ]
             },
-            pricing: {
-                title: '💰 Pricing',
-                description: 'Understand our pricing structure',
-                questions: [
+            behind: {
+                icon: '📅',
+                title: "My books are behind and I need to catch up",
+                subtitle: "Months of unreconciled records piling up",
+                empathy: "This is more common than you think — and the worst thing you can do is wait until tax season to deal with it. The longer it sits, the harder it is to reconstruct what happened and the more expensive cleanup gets.",
+                followup: "How far behind are you?",
+                options: [
                     {
-                        q: 'How much do your services cost?',
-                        a: 'Our pricing is designed to be affordable for bootstrap founders at every stage:\n\n**Templates:** $7-$99 (one-time)\n**Bookkeeping Reset:** $997 (one-time, 14-day service)\n**Monthly Basic:** $97/month\n**Monthly Standard:** $297/month\n**CFO Service:** $697/month\n\n💡 We recommend what you actually need based on your Financial Level—no overselling!',
+                        label: "A few months to most of this year",
+                        response: "If you have your bank and card statements in digital form (CSV or spreadsheet exports), the Historical Summary Load is built for exactly this.\n\nI take the months you're behind, categorize every transaction using a standard list that maps to Schedule C, break it out month by month, and load it as your opening position — so when you start running your system going forward, your year-to-date numbers are already correct.\n\nFlat price: $297. Four conditions: complete months, digital exports, one business entity, everything delivered at once. Meet those four and that's the price, start to finish.",
                         ctas: [
-                            { text: 'Take Free Quiz', url: 'https://stan.store/ledgerliftstudio/p/-free-find-your-journey-level-quiz', primary: true }
-                        ]
+                            { text: 'Start my catch-up — $297', url: 'https://stan.store/ledgerliftstudio', primary: true }
+                        ],
+                        level: 'Level 2'
                     },
                     {
-                        q: 'Do you offer payment plans?',
-                        a: 'For the **Bookkeeping Reset** ($997), we offer:\n• 50% upfront ($498.50)\n• 50% on completion ($498.50)\n\n**Monthly services** are billed monthly with no long-term contracts—cancel anytime!\n\n**Templates** are one-time purchases (no payment plans needed for small amounts).',
+                        label: "I honestly don't know where to start",
+                        response: "When it's been a while and you're not sure what you even have, the first step is figuring out where you stand — not jumping into software.\n\nThe free diagnostic is built for exactly this moment. Two minutes, and it scores your bookkeeping maturity — what stage you're at and what actually needs to happen next. Once you see the result, the right next step becomes obvious.",
                         ctas: [
-                            { text: 'Book Diagnostic Call', url: 'https://cal.com/ledgerliftstudio/diagnostic', primary: true }
-                        ]
+                            { text: 'Take the Free Diagnostic', url: 'https://diagnostic.ledgerliftstudio.com', primary: true }
+                        ],
+                        level: 'Level 1'
                     }
                 ]
             },
-            levels: {
-                title: '🎯 Journey Levels',
-                description: 'Understand the 5 Financial Levels',
-                questions: [
+            categories: {
+                icon: '🏷️',
+                title: "I'm not sure my categories are right",
+                subtitle: "Guessing at classifications, worried about mistakes",
+                empathy: "This is one of the most expensive mistakes I see — not because a wrong category costs you money directly, but because uncertain categories mean you can't trust your P&L, your tax filing has risk in it, and you're making business decisions on numbers that might not be real.\n\nThe fix isn't guessing harder. It's having a standard category list that maps directly to how you'll file.",
+                followup: "What's your current setup?",
+                options: [
                     {
-                        q: 'What are the 5 Financial Levels?',
-                        a: 'The **5 Financial Levels Framework** helps you identify where you are and what you need next:\n\n**Level 1 ($0-$50K):** DIY with templates\n**Level 2 ($50K-$150K):** Need cleanup/reset\n**Level 3 ($150K-$300K):** Need ongoing support\n**Level 4 ($300K-$500K):** Need CFO guidance\n**Level 5 ($500K+):** Need full financial team\n\nKnowing your level helps you invest in the RIGHT solution—not too little, not too much.',
+                        label: "Making it up as I go",
+                        response: "You need to know where you stand before picking a system. The free diagnostic scores your bookkeeping maturity in about 2 minutes — it identifies whether your category problem is a framework issue or a software issue, and routes you to the right fix.\n\nNo guessing, no generic advice. Just a clear read on what stage you're at.",
                         ctas: [
-                            { text: 'Find Your Level (Free Quiz)', url: 'https://stan.store/ledgerliftstudio/p/-free-find-your-journey-level-quiz', primary: true }
-                        ]
+                            { text: 'Take the Free Diagnostic', url: 'https://diagnostic.ledgerliftstudio.com', primary: true }
+                        ],
+                        level: 'Level 1'
                     },
                     {
-                        q: 'How do I know which level I\'m at?',
-                        a: 'Take our **free 2-minute assessment**! It asks about:\n• Your current revenue\n• How you handle bookkeeping now\n• Your biggest challenges\n• What you need help with\n\nYou\'ll get instant results showing your Financial Level plus a personalized action plan.',
+                        label: "I use QuickBooks/Xero but I'm not confident",
+                        response: "The software isn't the problem — it's that you don't have a locked category standard to check against. LedgerDesk Solo ($197) uses a standard category list locked against Schedule C. Every transaction gets a category, a status (settled, needs review, needs receipt), and an audit trail.\n\nYou can run it alongside QuickBooks as your financial command center — the system that makes sure your books are complete and explainable before you hand them off.",
                         ctas: [
-                            { text: 'Take the Quiz Now', url: 'https://stan.store/ledgerliftstudio/p/-free-find-your-journey-level-quiz', primary: true }
-                        ]
+                            { text: 'See LedgerDesk Solo — $197', url: 'https://stan.store/Ledgerliftstudio/p/ledgerdesk-solo--bookkeeping-for-founders', primary: true }
+                        ],
+                        level: 'Level 3'
                     }
                 ]
             },
-            getting_started: {
-                title: '🚀 Getting Started',
-                description: 'How to work with us',
-                questions: [
+            system: {
+                icon: '🔧',
+                title: "I need a system but QuickBooks feels like overkill",
+                subtitle: "Too much software, too complex, too expensive for where I am",
+                empathy: "This comes up constantly. QuickBooks is accounting software — it's designed for accountants. What most founders actually need at the $0–$500K stage is something different: a financial command center that tracks what's happening, shows what it means, and holds up when your CPA asks questions.\n\nThat's what I build.",
+                followup: "What's your approximate monthly transaction volume?",
+                options: [
                     {
-                        q: 'How do I get started?',
-                        a: 'Getting started is easy! Here\'s the process:\n\n**Step 1:** Take the free Financial Level Quiz (2 minutes)\n**Step 2:** Book a free 15-minute diagnostic call\n**Step 3:** Get your personalized recommendation\n**Step 4:** Choose your solution (template, service, or subscription)\n\n**No pressure, no pitch—just clarity on what you actually need.**',
+                        label: "Under 100 transactions/month",
+                        response: "At that volume, you don't need a full accounting platform. LedgerDesk Solo ($197) runs on Airtable's free plan at that transaction level — no subscription needed. It's a 15-table financial system I built from real client data: transactions, categories, invoices, tax prep view, P&L trend, and a monthly close tracker.\n\nYou own it. It runs in your own Airtable account. I hand it over and you run your business on it. (If you grow past roughly 100 transactions a month, Airtable's own paid tier — about $20/mo — is worth adding; the system itself doesn't change.)",
                         ctas: [
-                            { text: 'Book Free Call', url: 'https://cal.com/ledgerliftstudio/diagnostic', primary: true },
-                            { text: 'Take Quiz First', url: 'https://stan.store/ledgerliftstudio/p/-free-find-your-journey-level-quiz', primary: false }
-                        ]
+                            { text: 'See LedgerDesk Solo — $197', url: 'https://stan.store/Ledgerliftstudio/p/ledgerdesk-solo--bookkeeping-for-founders', primary: true }
+                        ],
+                        level: 'Level 3'
                     },
                     {
-                        q: 'What is a diagnostic call?',
-                        a: '**Diagnostic Call Details:**\n• **Duration:** 15 minutes\n• **Cost:** Free\n• **Format:** Zoom video call\n• **What we cover:**\n  - Your current bookkeeping situation\n  - Identify your Financial Level\n  - Show you exactly what\'s broken\n  - Recommend the right solution\n\n**No pitch. Just clarity.** You\'ll walk away knowing exactly what you need to do next.',
+                        label: "I'm not sure / I haven't been tracking",
+                        response: "Before picking a system, you need to know what you're working with. The free diagnostic is the starting point — it scores your bookkeeping maturity and tells you what level of system you actually need.\n\nTwo minutes, no cost. No point buying software until you know the size of the problem.",
                         ctas: [
-                            { text: 'Book Your Free Call', url: 'https://cal.com/ledgerliftstudio/diagnostic', primary: true }
-                        ]
+                            { text: 'Take the Free Diagnostic', url: 'https://diagnostic.ledgerliftstudio.com', primary: true }
+                        ],
+                        level: 'Level 1'
+                    }
+                ]
+            },
+            profitable: {
+                icon: '💰',
+                title: "I can't actually tell if I'm profitable",
+                subtitle: "Checking the bank balance isn't a strategy",
+                empathy: "If your monthly financial review is 'check the bank balance and hope,' you're not alone — but you are flying blind. Profit isn't what's in the account. It's what you can prove with organized records, proper categories, and a monthly close that you've actually reviewed.",
+                followup: "What does your monthly review process look like?",
+                options: [
+                    {
+                        label: "I don't have one",
+                        response: "Start here. The free diagnostic takes about 2 minutes and tells you exactly where your books stand — what stage you're at and what the right next step is. It's the same assessment process I use before building any client system.\n\nOnce you can see the picture clearly, you'll know exactly what needs to happen next.",
+                        ctas: [
+                            { text: 'Take the Free Diagnostic', url: 'https://diagnostic.ledgerliftstudio.com', primary: true }
+                        ],
+                        level: 'Level 1'
+                    },
+                    {
+                        label: "I look at reports but don't trust the numbers",
+                        response: "Reports are only as good as the data feeding them. If your categories are inconsistent, transactions are uncoded, or you haven't reconciled in months, the P&L is fiction.\n\nLedgerDesk Solo ($197) fixes this at the source — every transaction gets a category, a status, and a review trail. The dashboard shows cash position, spend by category, uncoded transactions, and missing receipts. When you close a month, it stays closed.",
+                        ctas: [
+                            { text: 'See LedgerDesk Solo — $197', url: 'https://stan.store/Ledgerliftstudio/p/ledgerdesk-solo--bookkeeping-for-founders', primary: true },
+                            { text: 'View all products', url: 'https://stan.store/ledgerliftstudio', primary: false }
+                        ],
+                        level: 'Level 3'
                     }
                 ]
             }
         };
 
-        // Main Chatbot Component
+        // ─── MAIN CHATBOT ───
         function Chatbot() {
-            const [messages, setMessages] = useState([
-                {
-                    type: 'bot',
-                    content: '👋 Hi! I\'m here to answer your questions about LedgerLift Studio products, pricing, and the Journey Level system.\n\nWhat would you like to know?',
-                    showCategories: true
-                }
-            ]);
+            const [messages, setMessages] = useState([{
+                type: 'bot',
+                content: "I'm Renee — I build financial database systems for founders.\n\nBefore I can point you to the right thing, I need to know what's going on. Which of these sounds like where you are right now?",
+                showPainPoints: true
+            }]);
             const [inputValue, setInputValue] = useState('');
             const [isTyping, setIsTyping] = useState(false);
             const [emailCaptured, setEmailCaptured] = useState(false);
+            const [showedEmailCapture, setShowedEmailCapture] = useState(false);
             const [conversationData, setConversationData] = useState({
+                painPoint: null,
+                followupAnswer: null,
+                estimatedLevel: null,
                 questionsAsked: [],
                 ctasClicked: [],
-                estimatedLevel: null,
                 startTime: new Date().toISOString()
             });
             const messagesEndRef = useRef(null);
 
-            const scrollToBottom = () => {
-                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-            };
-
             useEffect(() => {
-                scrollToBottom();
+                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
             }, [messages]);
 
-            // NEW: Send data to Make.com
             const sendToMake = async (data) => {
-                if (MAKE_WEBHOOK_URL === 'YOUR_MAKE_WEBHOOK_URL_HERE') {
-                    console.log('Make.com webhook not configured. Data:', data);
-                    return;
-                }
-
                 try {
                     await fetch(MAKE_WEBHOOK_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
+                        body: JSON.stringify({ source: 'ledgerlift-chatbot-v2', ...data })
                     });
-                } catch (error) {
-                    console.error('Error sending to Make.com:', error);
-                }
-            };
-
-            // NEW: Estimate Financial Level based on questions asked
-            const estimateFinancialLevel = (questions) => {
-                const keywords = {
-                    'level1': ['template', 'diy', 'starting', 'new'],
-                    'level2': ['reset', 'cleanup', 'behind', 'mess'],
-                    'level3': ['monthly', 'ongoing', 'support', 'regular'],
-                    'level4': ['cfo', 'strategic', 'guidance', 'planning']
-                };
-
-                const scores = { level1: 0, level2: 0, level3: 0, level4: 0 };
-
-                questions.forEach(q => {
-                    const lowerQ = q.toLowerCase();
-                    Object.keys(keywords).forEach(level => {
-                        keywords[level].forEach(keyword => {
-                            if (lowerQ.includes(keyword)) {
-                                scores[level]++;
-                            }
-                        });
-                    });
-                });
-
-                const maxScore = Math.max(...Object.values(scores));
-                if (maxScore === 0) return 'Unknown';
-
-                const estimatedLevel = Object.keys(scores).find(key => scores[key] === maxScore);
-                return estimatedLevel.replace('level', 'Level ');
+                } catch (e) { console.error('Webhook error:', e); }
             };
 
             const addMessage = (type, content, options = {}) => {
                 setMessages(prev => [...prev, { type, content, ...options }]);
             };
 
-            const handleCategoryClick = (categoryKey) => {
-                const category = QA_DATABASE[categoryKey];
-                addMessage('user', category.title);
-                
-                // Track question
+            const handlePainPointClick = (key) => {
+                const pp = PAIN_POINTS[key];
+                addMessage('user', pp.title);
+
                 setConversationData(prev => ({
                     ...prev,
-                    questionsAsked: [...prev.questionsAsked, category.title]
+                    painPoint: key,
+                    questionsAsked: [...prev.questionsAsked, pp.title]
                 }));
 
-                setIsTyping(true);
-                setTimeout(() => {
-                    setIsTyping(false);
-                    addMessage('bot', `Great! What would you like to know about ${category.title.split(' ').slice(1).join(' ')}?`, {
-                        questions: category.questions,
-                        categoryTitle: category.title
-                    });
-
-                    // NEW: Show email capture after 2 bot responses
-                    checkForEmailCapture();
-                }, 800);
-            };
-
-            const handleQuestionClick = (question) => {
-                addMessage('user', question.q);
-                
-                // Track question
-                setConversationData(prev => ({
-                    ...prev,
-                    questionsAsked: [...prev.questionsAsked, question.q],
-                    estimatedLevel: estimateFinancialLevel([...prev.questionsAsked, question.q])
-                }));
-
-                setIsTyping(true);
-                setTimeout(() => {
-                    setIsTyping(false);
-                    addMessage('bot', question.a, {
-                        ctas: question.ctas,
-                        showRestartPrompt: true
-                    });
-
-                    // NEW: Show email capture after 2 bot responses
-                    checkForEmailCapture();
-                }, 1000);
-            };
-
-            // NEW: Check if we should show email capture
-            const checkForEmailCapture = () => {
-                const botMessages = messages.filter(m => m.type === 'bot').length;
-                if (botMessages >= 2 && !emailCaptured) {
-                    setTimeout(() => {
-                        addMessage('bot', '💡 Want a personalized Financial Level action plan sent to your email?', {
-                            showEmailCapture: true
-                        });
-                    }, 1500);
-                }
-            };
-
-            // NEW: Handle email submission
-            const handleEmailSubmit = async (email) => {
-                setEmailCaptured(true);
-
-                // Send to Make.com
-                await sendToMake({
-                    type: 'email_captured',
-                    email: email,
-                    estimatedLevel: conversationData.estimatedLevel,
-                    questionsAsked: conversationData.questionsAsked,
+                sendToMake({
+                    type: 'pain_point_selected',
+                    painPoint: key,
+                    painPointTitle: pp.title,
                     timestamp: new Date().toISOString()
                 });
 
-                addMessage('bot', '✅ Perfect! Check your email in the next few minutes for your personalized action plan.\n\nAnything else I can help with?', {
-                    showCategories: true
-                });
+                setIsTyping(true);
+                setTimeout(() => {
+                    setIsTyping(false);
+                    addMessage('bot', pp.empathy + '\n\n' + pp.followup, {
+                        followups: pp.options,
+                        painPointKey: key
+                    });
+                }, 900);
             };
 
-            // NEW: Handle CTA clicks with tracking
-            const handleCTAClick = async (cta) => {
-                // Track CTA click
+            const handleFollowupClick = (option, painPointKey) => {
+                addMessage('user', option.label);
+
+                setConversationData(prev => ({
+                    ...prev,
+                    followupAnswer: option.label,
+                    estimatedLevel: option.level,
+                    questionsAsked: [...prev.questionsAsked, option.label]
+                }));
+
+                sendToMake({
+                    type: 'followup_answered',
+                    painPoint: painPointKey,
+                    answer: option.label,
+                    estimatedLevel: option.level,
+                    timestamp: new Date().toISOString()
+                });
+
+                setIsTyping(true);
+                setTimeout(() => {
+                    setIsTyping(false);
+                    addMessage('bot', option.response, {
+                        ctas: option.ctas,
+                        showRestart: true
+                    });
+
+                    // Show email capture after the product recommendation
+                    if (!showedEmailCapture && !emailCaptured) {
+                        setShowedEmailCapture(true);
+                        setTimeout(() => {
+                            addMessage('bot', "Want me to follow up with the specific next step for your situation?", {
+                                showEmailCapture: true
+                            });
+                        }, 1800);
+                    }
+                }, 1100);
+            };
+
+            const handleCTAClick = (cta) => {
                 setConversationData(prev => ({
                     ...prev,
                     ctasClicked: [...prev.ctasClicked, cta.text]
                 }));
-
-                // Send to Make.com
-                await sendToMake({
+                sendToMake({
                     type: 'cta_clicked',
                     ctaText: cta.text,
                     ctaUrl: cta.url,
+                    painPoint: conversationData.painPoint,
                     estimatedLevel: conversationData.estimatedLevel,
-                    questionsAsked: conversationData.questionsAsked,
                     timestamp: new Date().toISOString()
                 });
-
                 window.open(cta.url, '_blank');
+            };
+
+            const handleEmailSubmit = async (email) => {
+                setEmailCaptured(true);
+                await sendToMake({
+                    type: 'email_captured',
+                    email,
+                    painPoint: conversationData.painPoint,
+                    followupAnswer: conversationData.followupAnswer,
+                    estimatedLevel: conversationData.estimatedLevel,
+                    questionsAsked: conversationData.questionsAsked,
+                    ctasClicked: conversationData.ctasClicked,
+                    timestamp: new Date().toISOString()
+                });
+                addMessage('bot', "Got it — I'll follow up personally. In the meantime, feel free to explore anything else here, or head to the store to see what's available.", {
+                    showPainPoints: true
+                });
+            };
+
+            const handleRestart = () => {
+                addMessage('bot', "What else is going on with your books?", {
+                    showPainPoints: true
+                });
             };
 
             const handleUserInput = () => {
                 if (!inputValue.trim()) return;
-
-                const userQuestion = inputValue;
-                addMessage('user', userQuestion);
+                const q = inputValue.trim();
+                addMessage('user', q);
                 setInputValue('');
 
-                // Track question
                 setConversationData(prev => ({
                     ...prev,
-                    questionsAsked: [...prev.questionsAsked, userQuestion],
-                    estimatedLevel: estimateFinancialLevel([...prev.questionsAsked, userQuestion])
+                    questionsAsked: [...prev.questionsAsked, q]
                 }));
+
+                sendToMake({
+                    type: 'free_text',
+                    question: q,
+                    painPoint: conversationData.painPoint,
+                    timestamp: new Date().toISOString()
+                });
 
                 setIsTyping(true);
                 setTimeout(() => {
                     setIsTyping(false);
-                    
-                    // Simple keyword matching
-                    const lowerQuestion = userQuestion.toLowerCase();
-                    let foundAnswer = null;
-
-                    // Search through all categories for matching questions
-                    Object.values(QA_DATABASE).forEach(category => {
-                        category.questions.forEach(qa => {
-                            if (lowerQuestion.includes(qa.q.toLowerCase().split(' ').slice(0, 3).join(' '))) {
-                                foundAnswer = qa;
-                            }
+                    // Simple keyword routing
+                    const lower = q.toLowerCase();
+                    if (lower.includes('price') || lower.includes('cost') || lower.includes('how much')) {
+                        addMessage('bot', "Here's the current product line — every price is fixed, no hidden fees:\n\nFree Diagnostic — 2-minute bookkeeping maturity assessment (start here)\nLedgerDesk Access — $147 (Microsoft Access system)\nLedgerDesk Solo — $197 (Airtable system — the main product)\nHistorical Summary Load — $297 (catch up on behind books)\n\nEverything is a one-time purchase. LedgerDesk Solo runs on Airtable's free plan for most users — Airtable's paid tier (~$20/mo) only comes into play if you're past roughly 100 transactions a month.\n\nNot sure where to start? The free diagnostic figures that out for you.", {
+                            ctas: [
+                                { text: 'Take the Free Diagnostic', url: 'https://diagnostic.ledgerliftstudio.com', primary: true },
+                                { text: 'View all products', url: 'https://stan.store/ledgerliftstudio', primary: false }
+                            ],
+                            showRestart: true
                         });
-                    });
-
-                    if (foundAnswer) {
-                        addMessage('bot', foundAnswer.a, {
-                            ctas: foundAnswer.ctas,
-                            showRestartPrompt: true
+                    } else if (lower.includes('ledgerdesk') || lower.includes('airtable') || lower.includes('solo')) {
+                        addMessage('bot', "LedgerDesk Solo ($197) is the main system. It's a 15-table Airtable base — transactions, categories, invoices, tax prep, P&L trend, monthly close tracker. You copy it into your own Airtable account and own it outright.\n\nLedgerDesk Access ($147) is the same concept built in Microsoft Access — for founders who want it on their desktop, not in the cloud.", {
+                            ctas: [
+                                { text: 'See LedgerDesk Solo — $197', url: 'https://stan.store/Ledgerliftstudio/p/ledgerdesk-solo--bookkeeping-for-founders', primary: true },
+                                { text: 'See LedgerDesk Access — $147', url: 'https://stan.store/Ledgerliftstudio/p/ledgerdesk--microsoft-access-bookkeeping-system', primary: false }
+                            ],
+                            showRestart: true
+                        });
+                    } else if (lower.includes('workbook') || lower.includes('start') || lower.includes('phase 1') || lower.includes('begin') || lower.includes('diagnostic') || lower.includes('where do i')) {
+                        addMessage('bot', "The best starting point is the free diagnostic — it takes about 2 minutes and scores your bookkeeping maturity. It tells you exactly what stage you're at and what the right next step is.\n\nIt's the same assessment process I use before building any system. Once you see your score, the right next step becomes obvious.", {
+                            ctas: [
+                                { text: 'Take the Free Diagnostic', url: 'https://diagnostic.ledgerliftstudio.com', primary: true }
+                            ],
+                            showRestart: true
+                        });
+                    } else if (lower.includes('catch up') || lower.includes('behind') || lower.includes('cleanup') || lower.includes('summary load')) {
+                        addMessage('bot', "The Historical Summary Load ($297) is the catch-up service. I take your bank/card exports, categorize everything against Schedule C, break it out month by month, and load it as your opening position.\n\nFlat price, four conditions: complete months, digital exports (CSV/spreadsheet), one business entity, everything delivered at once.", {
+                            ctas: [
+                                { text: 'Start my catch-up — $297', url: 'https://stan.store/ledgerliftstudio', primary: true }
+                            ],
+                            showRestart: true
                         });
                     } else {
-                        addMessage('bot', `I don't have a pre-written answer for that specific question, but I'd be happy to help!\n\n📧 Please email us at hello@ledgerliftstudio.com and we'll get back to you within 24 hours.\n\nOr, try selecting a category above to see if your question is covered there!`, {
-                            showCategories: true
+                        addMessage('bot', "I don't have a pre-built answer for that one — but I'd like to help.\n\nEmail me directly at renee@ledgerliftstudio.com and I'll get back to you within 24 hours. Or pick one of the situations below and I can walk you through it.", {
+                            showPainPoints: true
                         });
                     }
-
-                    // Check for email capture
-                    checkForEmailCapture();
                 }, 1000);
-            };
-
-            const handleKeyPress = (e) => {
-                if (e.key === 'Enter') {
-                    handleUserInput();
-                }
             };
 
             return (
                 <div className="chatbot-container">
                     <div className="chatbot-header">
                         <div className="header-left">
-                            <div className="header-icon">💬</div>
+                            <div className="header-icon">LL</div>
                             <div className="header-text">
                                 <h1>LedgerLift Studio</h1>
-                                <p>We're here to help! ✨</p>
+                                <p>Real numbers. Real systems. Built from real books.</p>
                             </div>
                         </div>
-                        <button 
-                            className="back-button"
-                            onClick={() => window.open('https://stan.store/ledgerliftstudio', '_blank')}
-                        >
-                            Back to Store
-                        </button>
+                        <a className="back-button" href="https://stan.store/ledgerliftstudio" target="_blank" rel="noopener">
+                            View Store
+                        </a>
                     </div>
 
                     <div className="chatbot-body">
-                        {messages.map((message, index) => (
-                            <div key={index} className={`message ${message.type}`}>
+                        {messages.map((msg, i) => (
+                            <div key={i} className={`message ${msg.type}`}>
                                 <div className="message-bubble">
-                                    {message.content.split('\n').map((line, i) => (
-                                        <React.Fragment key={i}>
-                                            {line.includes('**') ? (
-                                                <strong>{line.replace(/\*\*/g, '')}</strong>
-                                            ) : (
-                                                line
-                                            )}
-                                            {i < message.content.split('\n').length - 1 && <br />}
+                                    {msg.content.split('\n').map((line, j) => (
+                                        <React.Fragment key={j}>
+                                            {line.startsWith('**') && line.endsWith('**')
+                                                ? <strong>{line.replace(/\*\*/g, '')}</strong>
+                                                : line.includes('**')
+                                                    ? line.split(/(\*\*.*?\*\*)/).map((part, k) =>
+                                                        part.startsWith('**') ? <strong key={k}>{part.replace(/\*\*/g, '')}</strong> : part
+                                                      )
+                                                    : line
+                                            }
+                                            {j < msg.content.split('\n').length - 1 && <br />}
                                         </React.Fragment>
                                     ))}
 
-                                    {message.showCategories && (
-                                        <div className="quick-buttons">
-                                            {Object.entries(QA_DATABASE).map(([key, category]) => (
-                                                <div
-                                                    key={key}
-                                                    className="quick-button"
-                                                    onClick={() => handleCategoryClick(key)}
-                                                >
-                                                    <span className="quick-button-icon">
-                                                        {category.title.split(' ')[0]}
-                                                    </span>
-                                                    <div className="quick-button-text">
-                                                        <strong>{category.title.split(' ').slice(1).join(' ')}</strong>
-                                                        <small>{category.description}</small>
+                                    {msg.showPainPoints && (
+                                        <div className="pain-buttons">
+                                            {Object.entries(PAIN_POINTS).map(([key, pp]) => (
+                                                <div key={key} className="pain-button" onClick={() => handlePainPointClick(key)}>
+                                                    <span className="pain-icon">{pp.icon}</span>
+                                                    <div className="pain-text">
+                                                        <strong>{pp.title}</strong>
+                                                        <small>{pp.subtitle}</small>
                                                     </div>
                                                 </div>
                                             ))}
                                         </div>
                                     )}
 
-                                    {message.questions && (
-                                        <div className="message-options">
-                                            {message.questions.map((q, i) => (
-                                                <button
-                                                    key={i}
-                                                    className="message-option-btn"
-                                                    onClick={() => handleQuestionClick(q)}
-                                                >
-                                                    → {q.q}
+                                    {msg.followups && (
+                                        <div className="followup-buttons">
+                                            {msg.followups.map((opt, j) => (
+                                                <button key={j} className="followup-btn"
+                                                    onClick={() => handleFollowupClick(opt, msg.painPointKey)}>
+                                                    {opt.label}
                                                 </button>
                                             ))}
                                         </div>
                                     )}
 
-                                    {message.ctas && message.ctas.length > 0 && (
+                                    {msg.ctas && msg.ctas.length > 0 && (
                                         <div className="cta-buttons">
-                                            {message.ctas.map((cta, i) => (
-                                                <button
-                                                    key={i}
+                                            {msg.ctas.map((cta, j) => (
+                                                <button key={j}
                                                     className={`cta-btn ${cta.primary ? 'primary' : 'secondary'}`}
-                                                    onClick={() => handleCTAClick(cta)}
-                                                >
+                                                    onClick={() => handleCTAClick(cta)}>
                                                     {cta.text}
                                                 </button>
                                             ))}
                                         </div>
                                     )}
 
-                                    {/* NEW: Email Capture Component */}
-                                    {message.showEmailCapture && !emailCaptured && (
+                                    {msg.showEmailCapture && !emailCaptured && (
                                         <EmailCapture onSubmit={handleEmailSubmit} />
+                                    )}
+
+                                    {msg.showRestart && (
+                                        <span className="restart-link" onClick={handleRestart}>
+                                            ← Explore another topic
+                                        </span>
                                     )}
                                 </div>
                             </div>
@@ -840,69 +662,49 @@
                                 </div>
                             </div>
                         )}
-
                         <div ref={messagesEndRef} />
                     </div>
 
                     <div className="chatbot-input">
-                        <input
-                            type="text"
-                            placeholder="Or type your question here..."
+                        <input type="text" placeholder="Or type your question..."
                             value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                        />
-                        <button onClick={handleUserInput} disabled={!inputValue.trim()}>
-                            Send
-                        </button>
+                            onChange={e => setInputValue(e.target.value)}
+                            onKeyPress={e => e.key === 'Enter' && handleUserInput()} />
+                        <button onClick={handleUserInput} disabled={!inputValue.trim()}>Send</button>
                     </div>
                 </div>
             );
         }
 
-        // NEW: Email Capture Component
+        // ─── EMAIL CAPTURE ───
         function EmailCapture({ onSubmit }) {
             const [email, setEmail] = useState('');
-            const [submitted, setSubmitted] = useState(false);
-
-            const handleSubmit = (e) => {
+            const [done, setDone] = useState(false);
+            const submit = (e) => {
                 e.preventDefault();
-                if (email && email.includes('@')) {
-                    setSubmitted(true);
+                if (email && email.includes('@') && email.includes('.')) {
+                    setDone(true);
                     onSubmit(email);
                 }
             };
-
-            if (submitted) {
-                return (
-                    <div className="email-capture">
-                        <div className="success-message">✅ Sent! Check your email.</div>
-                    </div>
-                );
-            }
-
+            if (done) return (
+                <div className="email-capture">
+                    <div className="success-msg">Got it — I'll be in touch.</div>
+                </div>
+            );
             return (
                 <div className="email-capture">
-                    <h3>📧 Get Your Personalized Action Plan</h3>
-                    <form className="email-capture-form" onSubmit={handleSubmit}>
-                        <input
-                            type="email"
-                            placeholder="your@email.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                        <button type="submit" disabled={!email.includes('@')}>
-                            Send It
-                        </button>
+                    <h3>Drop your email and I'll follow up with your next step:</h3>
+                    <form className="email-capture-form" onSubmit={submit}>
+                        <input type="email" placeholder="you@yourbusiness.com"
+                            value={email} onChange={e => setEmail(e.target.value)} required />
+                        <button type="submit" disabled={!email.includes('@')}>Send</button>
                     </form>
                 </div>
             );
         }
 
-        // Render the app
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<Chatbot />);
+        ReactDOM.createRoot(document.getElementById('root')).render(<Chatbot />);
     </script>
 </body>
 </html>
